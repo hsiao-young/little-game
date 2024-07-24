@@ -7,7 +7,7 @@ function adjustTarget(target, guess, direction) {
     if (difference > 7) {
         adjustment = Math.floor(Math.random() * 7) + 1;
     } else {
-        adjustment = Math.floor(Math.random() * 3) + 1;
+        adjustment = Math.floor(Math.random() * 2) + 1;
     }
     return direction === "big" ? target + adjustment : target - adjustment;
 }
