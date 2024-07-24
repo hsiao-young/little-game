@@ -26,3 +26,18 @@ input, button {
     margin-top: 20px;
     font-style: italic;
 }
+
+.game-rules {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+    font-size: 0.85em;
+    line-height: 1.4;
+    color: #666;
+    border: 1px solid #e0e0e0;
+}
+
+.game-rules strong {
+    color: #444;
+}
