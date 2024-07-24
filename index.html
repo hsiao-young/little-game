@@ -9,6 +9,12 @@
 <body>
     <div class="container">
         <h1>猜数字游戏</h1>
+        <p class="game-rules">
+            游戏规则：猜大了数字会跟着相应变大一点点，猜小了则会变小一点点。
+            当猜测与答案的差值大于7时，变化范围是1-7；
+            当差值小于或等于7时，变化范围是1-3。
+            这是个很好玩的抓鱼游戏哦！
+        </p>
         <p id="message">我已经想好了一个1到100之间的数字，请你来猜!</p>
         <input type="number" id="guessInput" min="1" max="100">
         <button id="guessButton">猜！</button>
