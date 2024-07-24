@@ -65,3 +65,11 @@ button:hover {
 .game-rules strong {
     color: #444;
 }
+
+.game-rules ol {
+    padding-left: 20px;
+}
+
+.game-rules li {
+    margin-bottom: 5px;
+}
