@@ -3,22 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>猜数字游戏</title>
+    <title>猜数字游戏 - 基础版和进阶版</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h1>猜数字游戏</h1>
-        <p id="message">我已经想好了一个1到100之间的数字，请你来猜!</p>
-        <input type="number" id="guessInput" min="1" max="100">
-        <button id="guessButton">猜！</button>
-        <p id="history"></p>
-        <p class="game-rules">
-            <strong>游戏规则：</strong>猜大了数字会跟着相应变大一点点，猜小了则会变小一点点。
-            当猜测与答案的差值大于7时，变化范围是1-7；
-            当差值小于或等于7时，变化范围是1-3。
-            这使得游戏更具挑战性！
-        </p>
+        
+        <!-- 基础版 -->
+        <div class="game-section">
+            <h2>基础版</h2>
+            <p id="basicMessage">我已经想好了一个1到100之间的数字，请你来猜!</p>
+            <input type="number" id="basicGuessInput" min="1" max="100">
+            <button id="basicGuessButton">猜！</button>
+            <p id="basicHistory"></p>
+        </div>
+
+        <!-- 进阶版 -->
+        <div class="game-section">
+            <h2>进阶版</h2>
+            <p id="advancedMessage">我已经想好了一个1到100之间的数字，请你来猜!</p>
+            <input type="number" id="advancedGuessInput" min="1" max="100">
+            <button id="advancedGuessButton">猜！</button>
+            <p id="advancedHistory"></p>
+            <p class="game-rules">
+                <strong>游戏规则（进阶版）：</strong>猜大了数字会跟着相应变大一点点，猜小了则会变小一点点。
+                当猜测与答案的差值大于7时，变化范围是1-7；
+                当差值小于或等于7时，变化范围是1-3。
+                这使得游戏更具挑战性！
+            </p>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
