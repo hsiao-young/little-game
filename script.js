@@ -2,16 +2,36 @@ let basicTarget = Math.floor(Math.random() * 100) + 1;
 let advancedTarget = Math.floor(Math.random() * 100) + 1;
 let basicHistory = [];
 let advancedHistory = [];
+let consecutiveGuesses = { count: 0, value: null };
 
-function adjustTarget(target, guess, direction) {
+function adjustTarget(target, guess) {
     const difference = Math.abs(target - guess);
     let adjustment;
-    if (difference > 7) {
-        adjustment = Math.floor(Math.random() * 7) + 1;
+    const direction = guess < target ? "big" : "small";
+    
+    if (difference <= 7) {
+        // 鱼已进网
+        adjustment = Math.min(Math.floor(Math.random() * 3) + 1, 7);
     } else {
-        adjustment = Math.floor(Math.random() * 3) + 1;
+        // 鱼未进网
+        adjustment = Math.floor(Math.random() * 7) + 1;
     }
-    return direction === "big" ? target + adjustment : target - adjustment;
+    
+    return direction === "big" ? target - adjustment : target + adjustment;
+}
+
+function handleConsecutiveGuesses(guess) {
+    if (guess === consecutiveGuesses.value) {
+        consecutiveGuesses.count++;
+        if (consecutiveGuesses.count === 3) {
+            advancedTarget = Math.floor(Math.random() * 100) + 1;
+            consecutiveGuesses = { count: 0, value: null };
+            return "唉，这个网真不耐用，三次就破了，鱼都跑出去了。目标已重置！";
+        }
+    } else {
+        consecutiveGuesses = { count: 1, value: guess };
+    }
+    return null;
 }
 
 function handleGuess(isAdvanced) {
@@ -30,19 +50,29 @@ function handleGuess(isAdvanced) {
     let target = isAdvanced ? advancedTarget : basicTarget;
     let history = isAdvanced ? advancedHistory : basicHistory;
 
-    if (guess < target) {
-        messageElement.textContent = "小了!";
-        if (isAdvanced) {
-            advancedTarget = adjustTarget(target, guess, "small");
+    if (isAdvanced) {
+        const resetMessage = handleConsecutiveGuesses(guess);
+        if (resetMessage) {
+            messageElement.textContent = resetMessage;
+            return;
         }
-    } else if (guess > target) {
-        messageElement.textContent = "大了!";
-        if (isAdvanced) {
-            advancedTarget = adjustTarget(target, guess, "big");
+
+        const difference = Math.abs(advancedTarget - guess);
+        if (difference <= 7) {
+            messageElement.textContent = guess < advancedTarget ? "鱼已进网，但还是小了！" : "鱼已进网，但还是大了！";
+        } else {
+            messageElement.textContent = guess < advancedTarget ? "小了，鱼没进网！" : "大了，鱼没进网！";
         }
+        advancedTarget = adjustTarget(advancedTarget, guess);
     } else {
-        messageElement.textContent = `恭喜你,猜对了!答案就是${target}。`;
-        document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
+        if (guess < target) {
+            messageElement.textContent = "小了!";
+        } else if (guess > target) {
+            messageElement.textContent = "大了!";
+        } else {
+            messageElement.textContent = `恭喜你,猜对了!答案就是${target}。`;
+            document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
+        }
     }
 
     history.push(guess);
