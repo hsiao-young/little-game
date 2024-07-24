@@ -59,9 +59,9 @@ function handleGuess(isAdvanced) {
 
         const difference = Math.abs(advancedTarget - guess);
         if (difference <= 7) {
-            messageElement.textContent = guess < advancedTarget ? "鱼已进网，但还是小了！" : "鱼已进网，但还是大了！";
+            messageElement.textContent = `鱼已进网！但还是${guess < advancedTarget ? '小' : '大'}了。鱼可能会跑出1-3步。`;
         } else {
-            messageElement.textContent = guess < advancedTarget ? "小了，鱼没进网！" : "大了，鱼没进网！";
+            messageElement.textContent = `${guess < advancedTarget ? '小' : '大'}了，鱼没进网！鱼可能会惊吓地跑出1-7步。`;
         }
         advancedTarget = adjustTarget(advancedTarget, guess);
     } else {
