@@ -11,7 +11,7 @@ function adjustTarget(target, guess) {
     
     if (difference <= 7) {
         // 鱼已进网
-        adjustment = Math.min(Math.floor(Math.random() * 3) + 1, 7);
+        adjustment = Math.min(Math.floor(Math.random() * 2) + 1, 7);
     } else {
         // 鱼未进网
         adjustment = Math.floor(Math.random() * 7) + 1;
