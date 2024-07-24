@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>猜数字游戏 - 基础版和进阶抓鱼版</title>
+    <title>猜数字游戏 - 基础版和进阶版</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0QFD9TJJ6"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-E0QFD9TJJ6');
+    </script>
 </head>
 <body>
     <div class="container">
@@ -19,18 +29,18 @@
             <p id="basicHistory"></p>
         </div>
 
-        <!-- 进阶抓鱼版 -->
+        <!-- 进阶版 -->
         <div class="game-section">
-            <h2>进阶抓鱼版</h2>
+            <h2>进阶版</h2>
             <p id="advancedMessage">我已经想好了一个1到100之间的数字，请你来猜!</p>
             <input type="number" id="advancedGuessInput" min="1" max="100">
             <button id="advancedGuessButton">猜！</button>
             <p id="advancedHistory"></p>
             <p class="game-rules">
-                <strong>游戏规则（进阶抓鱼版）：</strong>猜大了数字会跟着相应变大一点点，猜小了则会变小一点点。
-                当猜测与答案的差值大于7时，变化范围是1-7；
-                当差值小于或等于7时，变化范围是1-3。
-                这使得游戏更具挑战性！
+                <strong>游戏规则（进阶版）：</strong>猜大了数字会跟着相应变大一点点，猜小了则会变小一点点。
+                当猜测与答案的差值大于7时，变化范围是1-7；当差值小于或等于7时，变化范围是1-3。
+                目标数字总是在1到100之间。连续猜测相同的数字可能会导致目标数字重置。
+                游戏加入了一些随机性，使得每次猜测后的变化更加不可预测。这使得游戏更具挑战性！
             </p>
         </div>
     </div>
