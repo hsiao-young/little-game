@@ -119,9 +119,14 @@ function createNumberButtons() {
     for (let i = start; i <= end; i++) {
         const button = document.createElement('button');
         button.textContent = i;
-        button.style.margin = '5px';
-        button.style.width = 'calc(20% - 10px)';
-        button.addEventListener('click', () => handleGuess(true, i));
+        button.classList.add('number-button');
+        button.addEventListener('click', (e) => {
+            e.target.classList.add('clicked');
+            setTimeout(() => {
+                e.target.classList.remove('clicked');
+                handleGuess(true, i);
+            }, 200);
+        });
         numberButtonsContainer.appendChild(button);
     }
 }
