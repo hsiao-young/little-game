@@ -100,7 +100,7 @@ function handleGuess(isAdvanced, guess = null) {
     }
     
     history.push(guess);
-    updateHistory(historyElement, history, fishPositions);
+    updateHistory(historyElement, history, fishPositions, false);
     document.getElementById(inputId).value = "";
 }
 
@@ -124,28 +124,6 @@ function createNumberButtons() {
     }
 }
 
-function updateHistory(historyElement, history, fishPositions) {
+function updateHistory(historyElement, history, fishPositions, showFish = false) {
     const historyWithFish = history.map((guess, index) => {
-        if (fishPositions[index] !== undefined) {
-            return `${guess} <span class="fish-position">(${fishPositions[index]})</span>`;
-        }
-        return guess;
-    });
-    historyElement.innerHTML = "你猜过的数字: " + historyWithFish.join(", ");
-}
-
-function handleGiveUp() {
-    const historyElement = document.getElementById('advancedHistory');
-    updateHistory(historyElement, advancedHistory, fishPositions);
-    document.getElementById('advancedGuessButton').disabled = true;
-    document.getElementById('giveUpButton').disabled = true;
-    document.getElementById('numberButtons').style.display = 'none';
-}
-
-function init() {
-    document.getElementById('basicGuessButton').addEventListener('click', () => handleGuess(false));
-    document.getElementById('advancedGuessButton').addEventListener('click', () => handleGuess(true));
-    document.getElementById('giveUpButton').addEventListener('click', handleGiveUp);
-}
-
-window.addEventListener('load', init);
+        if (showFish && fishPositions[index] !== unde
