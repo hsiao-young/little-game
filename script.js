@@ -1,10 +1,20 @@
-let basicTarget = Math.floor(Math.random() * 100) + 1;
-let advancedTarget = Math.floor(Math.random() * 100) + 1;
+let basicTarget;
+let advancedTarget;
 let basicHistory = [];
 let advancedHistory = [];
 let consecutiveGuesses = { count: 0, value: null };
 let netCenter = null;
 let fishPositions = [];
+
+function getRandomNumber(min, max) {
+    const range = max - min + 1;
+    const array = Array.from({length: range}, (_, i) => i + min);
+    for (let i = range - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array[0];
+}
 
 function adjustTarget(target, guess) {
     if (netCenter === null) {
@@ -13,7 +23,7 @@ function adjustTarget(target, guess) {
             netCenter = target;
             return target;
         }
-        const adjustment = Math.floor(Math.random() * 5) + 3; // 改为3到7之间
+        const adjustment = Math.floor(Math.random() * 5) + 3;
         const direction = guess < target ? 1 : -1;
         return Math.max(1, Math.min(100, target + (adjustment * direction)));
     } else {
@@ -28,7 +38,7 @@ function handleConsecutiveGuesses(guess) {
     if (guess === consecutiveGuesses.value) {
         consecutiveGuesses.count++;
         if (consecutiveGuesses.count === 3) {
-            advancedTarget = Math.floor(Math.random() * 100) + 1;
+            advancedTarget = getRandomNumber(1, 100);
             consecutiveGuesses = { count: 0, value: null };
             netCenter = null;
             document.getElementById('numberButtons').style.display = 'none';
@@ -133,6 +143,11 @@ function createNumberButtons() {
             }, 200);
         });
         numberButtonsContainer.appendChild(button);
+        
+        // 每5个按钮后添加换行
+        if ((i - start + 1) % 5 === 0) {
+            numberButtonsContainer.appendChild(document.createElement('br'));
+        }
     }
 }
 
@@ -166,7 +181,7 @@ function addRestartButton(isAdvanced) {
 
 function restartGame(isAdvanced) {
     if (isAdvanced) {
-        advancedTarget = Math.floor(Math.random() * 100) + 1;
+        advancedTarget = getRandomNumber(1, 100);
         advancedHistory = [];
         consecutiveGuesses = { count: 0, value: null };
         netCenter = null;
@@ -176,7 +191,7 @@ function restartGame(isAdvanced) {
         document.getElementById('giveUpButton').disabled = false;
         document.getElementById('numberButtons').style.display = 'none';
     } else {
-        basicTarget = Math.floor(Math.random() * 100) + 1;
+        basicTarget = getRandomNumber(1, 100);
         basicHistory = [];
         document.getElementById('basicMessage').textContent = "我已经想好了一个1到100之间的数字，请你来猜！";
         document.getElementById('basicGuessButton').disabled = false;
@@ -187,6 +202,8 @@ function restartGame(isAdvanced) {
 
 function init() {
     console.log("Initializing game...");
+    basicTarget = getRandomNumber(1, 100);
+    advancedTarget = getRandomNumber(1, 100);
     document.getElementById('basicGuessButton').addEventListener('click', () => {
         console.log("Basic guess button clicked");
         handleGuess(false);
