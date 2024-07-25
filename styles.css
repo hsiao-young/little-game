@@ -73,3 +73,26 @@ button:hover {
 .game-rules li {
     margin-bottom: 5px;
 }
+
+#numberButtons {
+    margin: 10px 0;
+}
+
+#numberButtons button {
+    margin: 2px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+#giveUpButton {
+    margin-top: 10px;
+    background-color: #f44336;
+}
+
+#giveUpButton:hover {
+    background-color: #d32f2f;
+}
+
+.fish-position {
+    color: #999;
+}
