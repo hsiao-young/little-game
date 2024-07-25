@@ -41,6 +41,7 @@ function handleConsecutiveGuesses(guess) {
 }
 
 function handleGuess(isAdvanced, guess = null) {
+    console.log("handleGuess called", isAdvanced, guess);
     const inputId = isAdvanced ? 'advancedGuessInput' : 'basicGuessInput';
     const messageId = isAdvanced ? 'advancedMessage' : 'basicMessage';
     const historyId = isAdvanced ? 'advancedHistory' : 'basicHistory';
@@ -64,6 +65,7 @@ function handleGuess(isAdvanced, guess = null) {
         const resetMessage = handleConsecutiveGuesses(guess);
         if (resetMessage) {
             messageElement.textContent = resetMessage;
+            fishPositions = [];
             return;
         }
         const difference = Math.abs(advancedTarget - guess);
@@ -100,7 +102,7 @@ function handleGuess(isAdvanced, guess = null) {
     }
     
     history.push(guess);
-    updateHistory(historyElement, history, fishPositions, false);
+    updateHistory(historyElement, history, isAdvanced ? fishPositions : [], false);
     document.getElementById(inputId).value = "";
 }
 
@@ -126,4 +128,34 @@ function createNumberButtons() {
 
 function updateHistory(historyElement, history, fishPositions, showFish = false) {
     const historyWithFish = history.map((guess, index) => {
-        if (showFish && fishPositions[index] !== unde
+        if (showFish && fishPositions[index] !== undefined) {
+            return `${guess} <span class="fish-position">(${fishPositions[index]})</span>`;
+        }
+        return guess;
+    });
+    historyElement.innerHTML = "你猜过的数字: " + historyWithFish.join(", ");
+}
+
+function handleGiveUp() {
+    console.log("Give up button clicked");
+    const historyElement = document.getElementById('advancedHistory');
+    updateHistory(historyElement, advancedHistory, fishPositions, true);
+    document.getElementById('advancedGuessButton').disabled = true;
+    document.getElementById('giveUpButton').disabled = true;
+    document.getElementById('numberButtons').style.display = 'none';
+}
+
+function init() {
+    console.log("Initializing game...");
+    document.getElementById('basicGuessButton').addEventListener('click', () => {
+        console.log("Basic guess button clicked");
+        handleGuess(false);
+    });
+    document.getElementById('advancedGuessButton').addEventListener('click', () => {
+        console.log("Advanced guess button clicked");
+        handleGuess(true);
+    });
+    document.getElementById('giveUpButton').addEventListener('click', handleGiveUp);
+}
+
+window.addEventListener('load', init);
