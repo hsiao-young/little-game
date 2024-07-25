@@ -13,14 +13,14 @@ function adjustTarget(target, guess) {
             netCenter = target;
             return target;
         }
-        const adjustment = Math.floor(Math.random() * 7) + 1;
+        const adjustment = Math.floor(Math.random() * 5) + 3; // 改为3到7之间
         const direction = guess < target ? 1 : -1;
         return Math.max(1, Math.min(100, target + (adjustment * direction)));
     } else {
         const adjustment = Math.floor(Math.random() * 3) + 1;
         const direction = Math.random() < 0.5 ? 1 : -1;
         let newTarget = target + (adjustment * direction);
-        return Math.max(netCenter - 7, Math.min(netCenter + 7, newTarget));
+        return Math.max(1, Math.min(100, Math.max(netCenter - 7, Math.min(netCenter + 7, newTarget))));
     }
 }
 
