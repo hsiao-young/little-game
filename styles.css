@@ -83,6 +83,7 @@ button:hover {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 10px;
+    text-align: center;
 }
 
 .number-button {
@@ -96,6 +97,9 @@ button:hover {
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .number-button:hover {
@@ -106,4 +110,9 @@ button:hover {
 .number-button.clicked {
     background-color: #367c39;
     transform: scale(0.9);
+}
+
+#numberButtons br {
+    width: 100%;
+    content: "";
 }
