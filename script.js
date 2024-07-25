@@ -4,7 +4,7 @@ let basicHistory = [];
 let advancedHistory = [];
 let consecutiveGuesses = { count: 0, value: null };
 let netCenter = null;
-let fishPosition = null;
+let fishPositions = [];
 
 function adjustTarget(target, guess) {
     if (netCenter === null) {
@@ -31,6 +31,7 @@ function handleConsecutiveGuesses(guess) {
             advancedTarget = Math.floor(Math.random() * 100) + 1;
             consecutiveGuesses = { count: 0, value: null };
             netCenter = null;
+            document.getElementById('numberButtons').style.display = 'none';
             return "唉，这个网真不耐用，三次就破了，鱼都跑出去了。目标已重置！";
         }
     } else {
@@ -39,19 +40,26 @@ function handleConsecutiveGuesses(guess) {
     return null;
 }
 
-function handleGuess(isAdvanced) {
+function handleGuess(isAdvanced, guess = null) {
     const inputId = isAdvanced ? 'advancedGuessInput' : 'basicGuessInput';
     const messageId = isAdvanced ? 'advancedMessage' : 'basicMessage';
     const historyId = isAdvanced ? 'advancedHistory' : 'basicHistory';
-    const guess = parseInt(document.getElementById(inputId).value);
+    
+    if (guess === null) {
+        guess = parseInt(document.getElementById(inputId).value);
+    }
+    
     const messageElement = document.getElementById(messageId);
     const historyElement = document.getElementById(historyId);
+    
     if (isNaN(guess) || guess < 1 || guess > 100) {
         messageElement.textContent = "请输入1到100之间的有效数字！";
         return;
     }
+    
     let target = isAdvanced ? advancedTarget : basicTarget;
     let history = isAdvanced ? advancedHistory : basicHistory;
+    
     if (isAdvanced) {
         const resetMessage = handleConsecutiveGuesses(guess);
         if (resetMessage) {
@@ -63,6 +71,7 @@ function handleGuess(isAdvanced) {
             if (difference <= 7) {
                 messageElement.textContent = "鱼已进网！继续努力，抓住它！";
                 netCenter = advancedTarget;
+                createNumberButtons();
             } else {
                 messageElement.textContent = `${guess < advancedTarget ? '小' : '大'}了，鱼没进网！`;
             }
@@ -71,12 +80,13 @@ function handleGuess(isAdvanced) {
                 messageElement.textContent = "恭喜你，抓到鱼了！";
                 document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
                 document.getElementById('giveUpButton').disabled = true;
+                document.getElementById('numberButtons').style.display = 'none';
                 return;
             } else {
                 messageElement.textContent = `很接近了！但还是${guess < advancedTarget ? '小' : '大'}了一点。`;
             }
         }
-        fishPosition = advancedTarget;
+        fishPositions.push(advancedTarget);
         advancedTarget = adjustTarget(advancedTarget, guess);
     } else {
         if (guess < target) {
@@ -88,42 +98,51 @@ function handleGuess(isAdvanced) {
             document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
         }
     }
+    
     history.push(guess);
-    historyElement.textContent = "你猜过的数字: " + history.join(", ");
+    updateHistory(historyElement, history, fishPositions);
     document.getElementById(inputId).value = "";
 }
 
 function createNumberButtons() {
     const numberButtonsContainer = document.getElementById('numberButtons');
-    for (let i = 1; i <= 15; i++) {
+    numberButtonsContainer.innerHTML = '';
+    numberButtonsContainer.style.display = 'flex';
+    numberButtonsContainer.style.flexWrap = 'wrap';
+    numberButtonsContainer.style.justifyContent = 'center';
+    
+    const start = Math.max(1, netCenter - 7);
+    const end = Math.min(100, netCenter + 7);
+    
+    for (let i = start; i <= end; i++) {
         const button = document.createElement('button');
         button.textContent = i;
-        button.addEventListener('click', () => {
-            document.getElementById('advancedGuessInput').value = i;
-        });
+        button.style.margin = '5px';
+        button.style.width = 'calc(20% - 10px)';
+        button.addEventListener('click', () => handleGuess(true, i));
         numberButtonsContainer.appendChild(button);
     }
 }
 
-function handleGiveUp() {
-    if (fishPosition !== null) {
-        const historyElement = document.getElementById('advancedHistory');
-        const guessedNumbers = advancedHistory.map(num => num.toString());
-        const lastGuessIndex = guessedNumbers.lastIndexOf(fishPosition.toString());
-        if (lastGuessIndex !== -1) {
-            guessedNumbers[lastGuessIndex] += ` <span class="fish-position">(${fishPosition})</span>`;
-        } else {
-            guessedNumbers.push(`<span class="fish-position">(${fishPosition})</span>`);
+function updateHistory(historyElement, history, fishPositions) {
+    const historyWithFish = history.map((guess, index) => {
+        if (fishPositions[index] !== undefined) {
+            return `${guess} <span class="fish-position">(${fishPositions[index]})</span>`;
         }
-        historyElement.innerHTML = "你猜过的数字: " + guessedNumbers.join(", ");
-        historyElement.innerHTML += '<br>游戏结束,鱼的最后位置已显示。';
-        document.getElementById('advancedGuessButton').disabled = true;
-        document.getElementById('giveUpButton').disabled = true;
-    }
+        return guess;
+    });
+    historyElement.innerHTML = "你猜过的数字: " + historyWithFish.join(", ");
+}
+
+function handleGiveUp() {
+    const historyElement = document.getElementById('advancedHistory');
+    updateHistory(historyElement, advancedHistory, fishPositions);
+    document.getElementById('advancedGuessButton').disabled = true;
+    document.getElementById('giveUpButton').disabled = true;
+    document.getElementById('numberButtons').style.display = 'none';
 }
 
 function init() {
-    createNumberButtons();
     document.getElementById('basicGuessButton').addEventListener('click', () => handleGuess(false));
     document.getElementById('advancedGuessButton').addEventListener('click', () => handleGuess(true));
     document.getElementById('giveUpButton').addEventListener('click', handleGiveUp);
