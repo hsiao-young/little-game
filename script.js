@@ -79,10 +79,13 @@ function handleGuess(isAdvanced, guess = null) {
             }
         } else {
             if (difference === 0) {
-                messageElement.textContent = "恭喜你，抓到鱼了！";
+                messageElement.textContent = `恭喜你，抓到鱼了！这条鱼的编号是 ${advancedTarget}。`;
                 document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
                 document.getElementById('giveUpButton').disabled = true;
                 document.getElementById('numberButtons').style.display = 'none';
+                history.push(guess);
+                updateHistory(historyElement, history, fishPositions, false);
+                addRestartButton(isAdvanced);
                 return;
             } else {
                 messageElement.textContent = `很接近了！但还是${guess < advancedTarget ? '小' : '大'}了一点。`;
@@ -98,6 +101,8 @@ function handleGuess(isAdvanced, guess = null) {
         } else {
             messageElement.textContent = `恭喜你,猜对了!答案就是${target}。`;
             document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
+            addRestartButton(isAdvanced);
+            return;
         }
     }
     
@@ -148,6 +153,36 @@ function handleGiveUp() {
     document.getElementById('advancedGuessButton').disabled = true;
     document.getElementById('giveUpButton').disabled = true;
     document.getElementById('numberButtons').style.display = 'none';
+}
+
+function addRestartButton(isAdvanced) {
+    const gameSection = isAdvanced ? document.querySelector('.game-section:nth-child(2)') : document.querySelector('.game-section:first-child');
+    const restartButton = document.createElement('button');
+    restartButton.textContent = '重新开始';
+    restartButton.id = 'restartButton';
+    restartButton.addEventListener('click', () => restartGame(isAdvanced));
+    gameSection.appendChild(restartButton);
+}
+
+function restartGame(isAdvanced) {
+    if (isAdvanced) {
+        advancedTarget = Math.floor(Math.random() * 100) + 1;
+        advancedHistory = [];
+        consecutiveGuesses = { count: 0, value: null };
+        netCenter = null;
+        fishPositions = [];
+        document.getElementById('advancedMessage').textContent = "鱼儿跳进了泳池，快来抓住它呀!（每次抓鱼都会吓跑，池底是1-100的地砖铺成的）";
+        document.getElementById('advancedGuessButton').disabled = false;
+        document.getElementById('giveUpButton').disabled = false;
+        document.getElementById('numberButtons').style.display = 'none';
+    } else {
+        basicTarget = Math.floor(Math.random() * 100) + 1;
+        basicHistory = [];
+        document.getElementById('basicMessage').textContent = "我已经想好了一个1到100之间的数字，请你来猜！";
+        document.getElementById('basicGuessButton').disabled = false;
+    }
+    document.getElementById('restartButton').remove();
+    updateHistory(document.getElementById(isAdvanced ? 'advancedHistory' : 'basicHistory'), [], [], false);
 }
 
 function init() {
