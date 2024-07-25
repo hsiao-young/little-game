@@ -4,25 +4,22 @@ let basicHistory = [];
 let advancedHistory = [];
 let consecutiveGuesses = { count: 0, value: null };
 let netCenter = null;
+let fishPosition = null;
 
 function adjustTarget(target, guess) {
     if (netCenter === null) {
         const difference = Math.abs(target - guess);
         if (difference <= 7) {
-            // 鱼进网，设置网的中心
             netCenter = target;
-            return target; // 鱼刚进网，位置不变
+            return target;
         }
-        // 鱼未进网，大范围移动
         const adjustment = Math.floor(Math.random() * 7) + 1;
         const direction = guess < target ? 1 : -1;
         return Math.max(1, Math.min(100, target + (adjustment * direction)));
     } else {
-        // 鱼已在网内，小范围移动
         const adjustment = Math.floor(Math.random() * 3) + 1;
         const direction = Math.random() < 0.5 ? 1 : -1;
         let newTarget = target + (adjustment * direction);
-        // 确保新目标在网的范围内
         return Math.max(netCenter - 7, Math.min(netCenter + 7, newTarget));
     }
 }
@@ -33,7 +30,7 @@ function handleConsecutiveGuesses(guess) {
         if (consecutiveGuesses.count === 3) {
             advancedTarget = Math.floor(Math.random() * 100) + 1;
             consecutiveGuesses = { count: 0, value: null };
-            netCenter = null; // 重置网
+            netCenter = null;
             return "唉，这个网真不耐用，三次就破了，鱼都跑出去了。目标已重置！";
         }
     } else {
@@ -73,11 +70,13 @@ function handleGuess(isAdvanced) {
             if (difference === 0) {
                 messageElement.textContent = "恭喜你，抓到鱼了！";
                 document.getElementById(inputId.replace('Input', 'Button')).disabled = true;
+                document.getElementById('giveUpButton').disabled = true;
                 return;
             } else {
                 messageElement.textContent = `很接近了！但还是${guess < advancedTarget ? '小' : '大'}了一点。`;
             }
         }
+        fishPosition = advancedTarget;
         advancedTarget = adjustTarget(advancedTarget, guess);
     } else {
         if (guess < target) {
@@ -94,5 +93,40 @@ function handleGuess(isAdvanced) {
     document.getElementById(inputId).value = "";
 }
 
-document.getElementById('basicGuessButton').addEventListener('click', () => handleGuess(false));
-document.getElementById('advancedGuessButton').addEventListener('click', () => handleGuess(true));
+function createNumberButtons() {
+    const numberButtonsContainer = document.getElementById('numberButtons');
+    for (let i = 1; i <= 15; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.addEventListener('click', () => {
+            document.getElementById('advancedGuessInput').value = i;
+        });
+        numberButtonsContainer.appendChild(button);
+    }
+}
+
+function handleGiveUp() {
+    if (fishPosition !== null) {
+        const historyElement = document.getElementById('advancedHistory');
+        const guessedNumbers = advancedHistory.map(num => num.toString());
+        const lastGuessIndex = guessedNumbers.lastIndexOf(fishPosition.toString());
+        if (lastGuessIndex !== -1) {
+            guessedNumbers[lastGuessIndex] += ` <span class="fish-position">(${fishPosition})</span>`;
+        } else {
+            guessedNumbers.push(`<span class="fish-position">(${fishPosition})</span>`);
+        }
+        historyElement.innerHTML = "你猜过的数字: " + guessedNumbers.join(", ");
+        historyElement.innerHTML += '<br>游戏结束,鱼的最后位置已显示。';
+        document.getElementById('advancedGuessButton').disabled = true;
+        document.getElementById('giveUpButton').disabled = true;
+    }
+}
+
+function init() {
+    createNumberButtons();
+    document.getElementById('basicGuessButton').addEventListener('click', () => handleGuess(false));
+    document.getElementById('advancedGuessButton').addEventListener('click', () => handleGuess(true));
+    document.getElementById('giveUpButton').addEventListener('click', handleGiveUp);
+}
+
+window.addEventListener('load', init);
